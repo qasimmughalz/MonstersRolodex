@@ -1,48 +1,48 @@
-import {Component} from 'react'
-import './App.css';
+import { Component } from "react";
+import "./App.css";
+import CardList from "./components/card-list/card-list.component";
+import SearchBox from "./components/search-box/search-box.component";
 
 class App extends Component {
-
-  constructor(){
+  constructor() {
     super();
     this.state = {
-      Monsters: [], 
-      searchField : ''
-    }
+      Monsters: [],
+      searchField: "",
+    };
   }
 
-  componentDidMount(){
-    fetch('https://jsonplaceholder.typicode.com/users')
-    .then((res)=>  res.json())
-    .then((users)=> {
-      this.setState( {Monsters : users} )
-    })
-    .catch((err)=> console.log(err))
+  componentDidMount() {
+    fetch("https://jsonplaceholder.typicode.com/users")
+      .then((res) => res.json())
+      .then((users) => {
+        this.setState({ Monsters: users });
+      })
+      .catch((err) => console.log(err));
   }
 
-  render(){
+  handleStateChange = (event)=> {
 
-    const filtered = this.state.Monsters.filter((monster) => monster.name.toLowerCase().includes(this.state.searchField)) 
+    const searchField = event.target.value.toLowerCase();
+    this.setState({searchField: searchField})
+  }
+
+
+  render() {
+    const filtered = this.state.Monsters.filter((monster) =>
+      monster.name.toLowerCase().includes(this.state.searchField)
+    );
+
     return (
-        
       <div className="App">
-        <input placeholder='Search Monster' 
-          onChange={(eve) =>  {
-          this.setState( ()=> {
-            return {
-                searchField: eve.target.value
-            }
-          }) }
-        }  
-           />
-
-        {filtered.map((users =>{
-          return <h1 key={users.id}>{users.name}</h1>
-        }))}
+        <SearchBox
+          placeholder="Search Monster"
+          onChange={this.handleStateChange}
+        />
+        <CardList FilteredMonsters={filtered} />
       </div>
     );
   }
-
 }
 
 export default App;
